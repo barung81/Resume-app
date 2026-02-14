@@ -36,6 +36,8 @@ export default function Analyze() {
                     matched_keywords: data.matched_keywords,
                     missing_keywords: data.missing_keywords,
                     suggestions: data.suggestions,
+                    resume_html: data.resume_html,
+                    source_type: data.source_type,
                 });
             } catch (historyErr) {
                 console.warn('Failed to save history:', historyErr);

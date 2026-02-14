@@ -28,13 +28,15 @@ export default function History() {
         // Navigate to a read-only view or re-show results
         navigate('/editor', {
             state: {
-                content: item.final_resume_html || `<p>${item.resume_text}</p>`,
+                content: item.final_resume_html || item.resume_html || `<p>${item.resume_text}</p>`,
                 originalResults: {
                     ats_score: item.ats_score,
                     matched_keywords: item.matched_keywords,
                     missing_keywords: item.missing_keywords,
                     suggestions: item.suggestions,
                     job_title: item.job_title,
+                    source_type: item.source_type || 'docx',
+                    resume_html: item.resume_html,
                 },
                 appliedKeywords: [],
             },
@@ -44,13 +46,15 @@ export default function History() {
     const handleEdit = (item) => {
         navigate('/editor', {
             state: {
-                content: item.final_resume_html || `<p>${item.resume_text}</p>`,
+                content: item.final_resume_html || item.resume_html || `<p>${item.resume_text}</p>`,
                 originalResults: {
                     ats_score: item.ats_score,
                     matched_keywords: item.matched_keywords,
                     missing_keywords: item.missing_keywords,
                     suggestions: item.suggestions,
                     job_title: item.job_title,
+                    source_type: item.source_type || 'docx',
+                    resume_html: item.resume_html,
                 },
                 appliedKeywords: [],
             },

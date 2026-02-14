@@ -16,7 +16,6 @@ class ExportRequest(BaseModel):
     html_content: str
     filename: Optional[str] = "resume"
 
-
 class HistoryCreate(BaseModel):
     job_title: Optional[str] = None
     job_description: str
@@ -25,6 +24,8 @@ class HistoryCreate(BaseModel):
     matched_keywords: List[str]
     missing_keywords: List[str]
     suggestions: List[str]
+    resume_html: Optional[str] = None
+    source_type: Optional[str] = "docx"
     final_resume_html: Optional[str] = None
 
 
@@ -38,6 +39,8 @@ class HistoryItem(BaseModel):
     matched_keywords: List[str]
     missing_keywords: List[str]
     suggestions: List[str]
+    resume_html: Optional[str] = None
+    source_type: Optional[str] = "docx"
     final_resume_html: Optional[str] = None
     created_at: str
 
