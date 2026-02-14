@@ -51,3 +51,25 @@ async def root():
 @app.get("/api/health")
 async def health():
     return {"status": "healthy"}
+
+
+@app.get("/api/models")
+async def list_models():
+    """List available Gemini models for debugging."""
+    try:
+        import google.generativeai as genai
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            return {"error": "GEMINI_API_KEY not set"}
+        
+        genai.configure(api_key=api_key)
+        models = []
+        for m in genai.list_models():
+            models.append({
+                "name": m.name,
+                "display_name": m.display_name,
+                "supported_methods": m.supported_generation_methods
+            })
+        return {"models": models}
+    except Exception as e:
+        return {"error": str(e)}
