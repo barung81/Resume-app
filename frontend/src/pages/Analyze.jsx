@@ -10,6 +10,7 @@ export default function Analyze() {
     const [jobDescription, setJobDescription] = useState('');
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [activeStep, setActiveStep] = useState(0);
     const [applyingKeywords, setApplyingKeywords] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -20,7 +21,13 @@ export default function Analyze() {
 
         setError('');
         setLoading(true);
+        setActiveStep(0);
         setResults(null);
+
+        // Start a timer to cycle through steps
+        const stepTimer = setInterval(() => {
+            setActiveStep((prev) => (prev < 3 ? prev + 1 : prev));
+        }, 3000);
 
         try {
             const data = await analyzeResume(resumeFile, jobDescription);
@@ -41,7 +48,6 @@ export default function Analyze() {
                 });
             } catch (historyErr) {
                 console.warn('Failed to save history:', historyErr);
-                // Optionally alert the user if it's persistent
                 const errorMsg = historyErr.response?.data?.detail || historyErr.message;
                 setError(`History not saved: ${errorMsg}. Your analysis is still ready below.`);
             }
@@ -53,6 +59,7 @@ export default function Analyze() {
                 : detail || err.message || 'Analysis failed';
             setError(message);
         } finally {
+            clearInterval(stepTimer);
             setLoading(false);
         }
     };
@@ -145,10 +152,10 @@ export default function Analyze() {
                         <h3>Analyzing your resume...</h3>
                         <p>Our AI is comparing your resume against the job description</p>
                         <div className="loading-steps">
-                            <span className="loading-step active">Parsing documents</span>
-                            <span className="loading-step">Extracting keywords</span>
-                            <span className="loading-step">Calculating ATS score</span>
-                            <span className="loading-step">Generating suggestions</span>
+                            <span className={`loading-step ${activeStep >= 0 ? 'active' : ''}`}>Parsing documents</span>
+                            <span className={`loading-step ${activeStep >= 1 ? 'active' : ''}`}>Extracting keywords</span>
+                            <span className={`loading-step ${activeStep >= 2 ? 'active' : ''}`}>Calculating ATS score</span>
+                            <span className={`loading-step ${activeStep >= 3 ? 'active' : ''}`}>Generating suggestions</span>
                         </div>
                     </div>
                 </div>
