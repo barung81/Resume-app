@@ -1273,6 +1273,23 @@ body {
   margin-top: var(--space-md);
 }
 
+/* Analysis Error */
+.analyze-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* =========================================
    EDITOR PAGE
    ========================================= */
