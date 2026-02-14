@@ -73,18 +73,21 @@ Rules:
     }
 
 
-async def suggest_keyword_placement(resume_content: str, keywords: list) -> str:
+async def suggest_keyword_placement(resume_content: str, keywords: list, source_type: str = "docx") -> str:
     """
-    Use LLM to intelligently place keywords into the resume content (Text or HTML).
-    Returns modified resume HTML content.
+    Use LLM to intelligently place keywords into the resume content.
+    Adapts strategy based on source_type (pdf reconstruction vs docx preservation).
     """
     model = get_model()
 
-    prompt = f"""You are an expert resume writer. 
+    if source_type == "pdf":
+        # Strategy for PDFs: Reconstruction into professional HTML
+        prompt = f"""You are an expert resume writer. 
 
-Given the following resume content (which may be HTML or plain text) and a list of keywords to add, modify the content to naturally incorporate these keywords while STRICTLY PRESERVING the original structure and formatting.
+The following text was extracted from a PDF. It has lost its original formatting.
+Your task is to RECONSTRUCT this into a professional, high-fidelity resume HTML format while incorporating the provided keywords.
 
-RESUME CONTENT:
+RESUME TEXT:
 ---
 {resume_content}
 ---
@@ -93,14 +96,33 @@ KEYWORDS TO ADD:
 {', '.join(keywords)}
 
 Rules:
-1. If the input is HTML, return the SAME HTML structure with the keywords added. 
+1. Reconstruct the resume into a clean, modern HTML structure.
+2. Use <h1> for the name, <h2> for section headers (Skills, Experience, Education).
+3. Use <ul> and <li> for bullet points.
+4. Incorporate the keywords NATURALLY into relevant sections. Do not just list them at the end.
+5. Ensure the name is centered if possible (using style="text-align: center").
+6. The output must be valid HTML.
+7. Return ONLY the HTML, no code fences or explanations."""
+    else:
+        # Strategy for DOCX: Preservation of high-fidelity Mammoth HTML
+        prompt = f"""You are an expert resume writer. 
+
+Given the following HTML resume and a list of keywords to add, modify the content to naturally incorporate these keywords while STRICTLY PRESERVING the original structure and formatting.
+
+RESUME HTML:
+---
+{resume_content}
+---
+
+KEYWORDS TO ADD:
+{', '.join(keywords)}
+
+Rules:
+1. Return the SAME HTML structure with the keywords added. 
 2. Do NOT remove any existing tags, styles, or classes.
 3. Add keywords naturally into existing bullet points, skill sections, or experience descriptions.
-4. Do NOT fabricate experience — only add keywords where they can reasonably fit based on existing content.
-5. If a keyword is a skill, add it to the skills section. If it's a tool/tech, weave it into relevant experience bullet points.
-6. Focus on maintaining a professional, high-fidelity resume layout.
-7. Return ONLY the modified content, no explanations or markdown fences. 
-8. If the output is HTML, ensure it is clean and valid."""
+4. Focus on maintaining the exact layout provided.
+5. Return ONLY the modified HTML, no explanations or code fences."""
 
     response = model.generate_content(prompt)
     return response.text.strip()

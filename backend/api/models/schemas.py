@@ -45,3 +45,4 @@ class HistoryItem(BaseModel):
 class KeywordApplyRequest(BaseModel):
     resume_html: str
     keywords: List[str]
+    source_type: Optional[str] = "docx"

@@ -7,7 +7,7 @@ import re
 
 
 async def parse_file(file: UploadFile) -> tuple:
-    """Parse uploaded file (PDF or DOCX) and return (text, html)."""
+    """Parse uploaded file (PDF or DOCX) and return (text, html, source_type)."""
     content = await file.read()
     filename = file.filename.lower() if file.filename else ""
 
@@ -15,9 +15,10 @@ async def parse_file(file: UploadFile) -> tuple:
         text = parse_pdf(content)
         # Convert plain text to simple HTML for the editor
         html = "".join([f"<p>{line}</p>" for line in text.split("\n\n") if line.strip()])
-        return text, html
+        return text, html, "pdf"
     elif filename.endswith(".docx"):
-        return parse_docx(content)
+        text, html = parse_docx(content)
+        return text, html, "docx"
     else:
         raise ValueError(f"Unsupported file format: {filename}. Please upload a PDF or DOCX file.")
 

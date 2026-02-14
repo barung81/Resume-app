@@ -61,7 +61,8 @@ export default function Analyze() {
             const resumeContent = results.resume_html || results.resume_text;
             const { modified_html } = await applyKeywords(
                 resumeContent,
-                selectedKeywords
+                selectedKeywords,
+                results.source_type
             );
 
             // Navigate to editor with the modified content

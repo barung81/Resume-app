@@ -27,10 +27,11 @@ export const analyzeResume = async (resumeFile, jobDescription) => {
     return response.data;
 };
 
-export const applyKeywords = async (resumeHtml, keywords) => {
+export const applyKeywords = async (resumeHtml, keywords, sourceType = 'docx') => {
     const response = await api.post('/api/apply-keywords', {
         resume_html: resumeHtml,
         keywords,
+        source_type: sourceType
     });
     return response.data;
 };

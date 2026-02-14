@@ -15,7 +15,7 @@ async def analyze(
     """Upload resume + job description, get ATS analysis."""
     try:
         # Parse the resume file
-        resume_text, resume_html = await parse_file(resume)
+        resume_text, resume_html, source_type = await parse_file(resume)
 
         if not resume_text.strip():
             raise HTTPException(
@@ -27,6 +27,7 @@ async def analyze(
         result = await analyze_resume(resume_text, job_description)
         result["resume_text"] = resume_text
         result["resume_html"] = resume_html
+        result["source_type"] = source_type
 
         return result
 
@@ -41,7 +42,7 @@ async def apply_keywords(request: KeywordApplyRequest):
     """Apply confirmed keywords to resume using LLM."""
     try:
         modified_html = await suggest_keyword_placement(
-            request.resume_html, request.keywords
+            request.resume_html, request.keywords, request.source_type
         )
 
         # Clean up any markdown fences from the response
