@@ -1279,8 +1279,8 @@ body {
 .editor-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 70px);
-  padding: var(--space-md);
+  flex: 1;
+  min-height: 0;
 }
 
 .editor-toolbar-top {
@@ -1432,27 +1432,24 @@ body {
 .editor-content-wrapper {
   flex: 1;
   overflow-y: auto;
-  max-height: calc(100vh - 250px);
-  background: var(--color-bg-2);
-  /* Dark background around the "page" */
-  padding: var(--space-xl);
+  background: #1a1a1a;
+  padding: 40px var(--space-md);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .editor-content {
   background: white;
-  /* The "page" is white */
-  color: #333;
-  /* Standard dark text for the resume */
+  color: #1a1a1a;
   width: 100%;
-  max-width: 800px;
-  /* A4-ish width */
-  min-height: 1000px;
+  max-width: 850px;
+  min-height: 1100px;
   padding: 60px 80px;
-  /* Professional margins */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-radius: 4px;
+  flex-shrink: 0;
+  margin-bottom: 40px;
 }
 
 .editor-content .tiptap {
