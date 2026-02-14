@@ -32,9 +32,17 @@ async def create_history(entry: HistoryCreate, user: dict = Depends(get_current_
         data = entry.model_dump()
         data["user_id"] = user["id"]
 
+        print(f"DEBUG: Saving history entry for user {user['id']}")
+        print(f"DEBUG: Data keys: {list(data.keys())}")
+
         response = supabase.table("history").insert(data).execute()
+        
+        if not response.data:
+            print("DEBUG: History insert returned no data")
+            
         return response.data[0] if response.data else {"status": "created"}
     except Exception as e:
+        print(f"DEBUG: History save FAILED: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to save history: {str(e)}")
 
 

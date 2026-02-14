@@ -41,6 +41,9 @@ export default function Analyze() {
                 });
             } catch (historyErr) {
                 console.warn('Failed to save history:', historyErr);
+                // Optionally alert the user if it's persistent
+                const errorMsg = historyErr.response?.data?.detail || historyErr.message;
+                setError(`History not saved: ${errorMsg}. Your analysis is still ready below.`);
             }
         } catch (err) {
             console.error('Analysis error:', err);

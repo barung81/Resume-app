@@ -42,7 +42,7 @@ class HistoryItem(BaseModel):
     resume_html: Optional[str] = None
     source_type: Optional[str] = "docx"
     final_resume_html: Optional[str] = None
-    created_at: str
+    created_at: datetime
 
 
 class KeywordApplyRequest(BaseModel):

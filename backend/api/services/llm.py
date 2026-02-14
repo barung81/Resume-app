@@ -99,10 +99,11 @@ Rules:
 1. Reconstruct the resume into a clean, modern HTML structure.
 2. Use <h1> for the name, <h2> for section headers (Skills, Experience, Education).
 3. Use <ul> and <li> for bullet points.
-4. Incorporate the keywords NATURALLY into relevant sections. Do not just list them at the end.
-5. Ensure the name is centered if possible (using style="text-align: center").
-6. The output must be valid HTML.
-7. Return ONLY the HTML, no code fences or explanations."""
+4. Incorporate the keywords NATURALLY into relevant sections as PLAIN TEXT.
+5. STRICTLY FORBIDDEN: Do not use markdown like * or ** or _ for bold, italics, or bullets. Use ONLY HTML tags.
+6. Ensure the name is centered if possible (using style="text-align: center").
+7. The output must be valid HTML.
+8. Return ONLY the HTML, no code fences or explanations."""
     else:
         # Strategy for DOCX: Preservation of high-fidelity Mammoth HTML
         prompt = f"""You are an expert resume writer. 
@@ -120,9 +121,24 @@ KEYWORDS TO ADD:
 Rules:
 1. Return the SAME HTML structure with the keywords added. 
 2. Do NOT remove any existing tags, styles, or classes.
-3. Add keywords naturally into existing bullet points, skill sections, or experience descriptions.
-4. Focus on maintaining the exact layout provided.
-5. Return ONLY the modified HTML, no explanations or code fences."""
+3. Add keywords naturally as PLAIN TEXT into existing bullet points, skill sections, or experience descriptions. 
+4. DO NOT use markdown characters like *, **, or _ for formatting. Maintain the original HTML formatting only.
+5. Focus on maintaining the exact layout provided.
+6. Return ONLY the modified HTML, no explanations or code fences."""
 
     response = model.generate_content(prompt)
-    return response.text.strip()
+    response_text = response.text.strip()
+    
+    # Sanitize: Remove common markdown bold/italic symbols that the AI might still inject
+    response_text = response_text.replace("**", "").replace("__", "")
+    
+    # Clean up markdown fences
+    if response_text.startswith("```"):
+        lines = response_text.split("\n")
+        # Handle cases where the first line might be ```html
+        if lines[0].startswith("```"):
+            response_text = "\n".join(lines[1:-1])
+        else:
+            response_text = "\n".join(lines[1:-1])
+
+    return response_text.strip()
