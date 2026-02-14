@@ -57,8 +57,10 @@ export default function Analyze() {
 
         setApplyingKeywords(true);
         try {
+            // Use resume_html if available, fallback to resume_text
+            const resumeContent = results.resume_html || results.resume_text;
             const { modified_html } = await applyKeywords(
-                results.resume_text,
+                resumeContent,
                 selectedKeywords
             );
 

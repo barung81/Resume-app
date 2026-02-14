@@ -89,12 +89,17 @@ def export_pdf(html_content: str) -> bytes:
 </html>"""
 
     try:
-        from weasyprint import HTML
-        pdf_bytes = HTML(string=full_html).write_pdf()
-        return pdf_bytes
+        from xhtml2pdf import pisa
+        buffer = BytesIO()
+        pisa_status = pisa.CreatePDF(full_html, dest=buffer)
+        
+        if pisa_status.err:
+            raise Exception("PDF generation failed in xhtml2pdf")
+            
+        buffer.seek(0)
+        return buffer.read()
     except ImportError:
-        # Fallback: use a simpler approach if weasyprint is not available
-        # We'll use reportlab as a fallback
+        # Final fallback: use a simpler approach if xhtml2pdf is not available
         try:
             from reportlab.lib.pagesizes import A4
             from reportlab.platypus import SimpleDocTemplate, Paragraph
@@ -113,6 +118,6 @@ def export_pdf(html_content: str) -> bytes:
             return buffer.read()
         except ImportError:
             raise ImportError(
-                "Neither WeasyPrint nor ReportLab is available. "
-                "Install one of them: pip install weasyprint OR pip install reportlab"
+                "PDF generation libraries (xhtml2pdf or reportlab) are not available. "
+                "Please check requirements.txt and redeploy."
             )

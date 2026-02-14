@@ -1,16 +1,21 @@
 import pdfplumber
+import mammoth
 from docx import Document
 from io import BytesIO
 from fastapi import UploadFile
+import re
 
 
-async def parse_file(file: UploadFile) -> str:
-    """Parse uploaded file (PDF or DOCX) and return extracted text."""
+async def parse_file(file: UploadFile) -> tuple:
+    """Parse uploaded file (PDF or DOCX) and return (text, html)."""
     content = await file.read()
     filename = file.filename.lower() if file.filename else ""
 
     if filename.endswith(".pdf"):
-        return parse_pdf(content)
+        text = parse_pdf(content)
+        # Convert plain text to simple HTML for the editor
+        html = "".join([f"<p>{line}</p>" for line in text.split("\n\n") if line.strip()])
+        return text, html
     elif filename.endswith(".docx"):
         return parse_docx(content)
     else:
@@ -28,11 +33,18 @@ def parse_pdf(content: bytes) -> str:
     return "\n\n".join(text_parts)
 
 
-def parse_docx(content: bytes) -> str:
-    """Extract text from DOCX bytes."""
-    doc = Document(BytesIO(content))
-    text_parts = []
-    for paragraph in doc.paragraphs:
-        if paragraph.text.strip():
-            text_parts.append(paragraph.text)
-    return "\n\n".join(text_parts)
+def parse_docx(content: bytes) -> tuple:
+    """Extract text and HTML from DOCX bytes."""
+    buffer = BytesIO(content)
+    
+    # Get HTML using mammoth (much better for structure preservation)
+    result = mammoth.convert_to_html(buffer)
+    html = result.value
+    
+    # Get plain text for analysis
+    buffer.seek(0)
+    doc = Document(buffer)
+    text_parts = [p.text for p in doc.paragraphs if p.text.strip()]
+    text = "\n\n".join(text_parts)
+    
+    return text, html

@@ -15,7 +15,7 @@ async def analyze(
     """Upload resume + job description, get ATS analysis."""
     try:
         # Parse the resume file
-        resume_text = await parse_file(resume)
+        resume_text, resume_html = await parse_file(resume)
 
         if not resume_text.strip():
             raise HTTPException(
@@ -26,6 +26,7 @@ async def analyze(
         # Analyze with LLM
         result = await analyze_resume(resume_text, job_description)
         result["resume_text"] = resume_text
+        result["resume_html"] = resume_html
 
         return result
 
