@@ -8,7 +8,13 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "api/main.py"
+      "dest": "api/main.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://resume-ats-pro.netlify.app",
+        "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, x-requested-with",
+        "Access-Control-Allow-Credentials": "true"
+      }
     }
   ]
 }

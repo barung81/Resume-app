@@ -17,13 +17,13 @@ api.interceptors.request.use(async (config) => {
 });
 
 export const analyzeResume = async (resumeFile, jobDescription) => {
+    console.log(`Sending analysis request to: ${API_BASE}/api/analyze`);
     const formData = new FormData();
     formData.append('resume', resumeFile);
     formData.append('job_description', jobDescription);
 
-    const response = await api.post('/api/analyze', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    // Let axios handle Content-Type for FormData
+    const response = await api.post('/api/analyze', formData);
     return response.data;
 };
 

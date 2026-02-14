@@ -41,7 +41,12 @@ export default function Analyze() {
                 console.warn('Failed to save history:', historyErr);
             }
         } catch (err) {
-            setError(err.response?.data?.detail || err.message || 'Analysis failed');
+            console.error('Analysis error:', err);
+            const detail = err.response?.data?.detail;
+            const message = Array.isArray(detail)
+                ? detail.map(d => d.msg).join(', ')
+                : detail || err.message || 'Analysis failed';
+            setError(message);
         } finally {
             setLoading(false);
         }

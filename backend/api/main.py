@@ -13,6 +13,7 @@ app = FastAPI(
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
+    "https://resume-ats-pro.netlify.app",  # Your Netlify URL
     os.getenv("FRONTEND_URL", ""),
 ]
 # Filter out empty strings
@@ -25,6 +26,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    print(f"Incoming request: {request.method} {request.url}")
+    if request.method == "POST":
+        content_type = request.headers.get("content-type", "")
+        print(f"Content-Type: {content_type}")
+    
+    response = await call_next(request)
+    print(f"Response status: {response.status_code}")
+    return response
 
 # Include routes
 app.include_router(resume.router)
